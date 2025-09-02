@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
-import Link from "next/link";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// If you were using a Google font earlier (Geist/Inter), you can add it back.
+// Example:
+// import { Inter } from "next/font/google";
+// const inter = Inter({ subsets: ["latin"] });
+
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Platforms Starter Kit",
-  description: "Next.js template for building a multi-tenant SaaS.",
+  title: "Majaz Parking Dashboard",
+  description: "Parking insights demo (Majaz 3 / UAE - Parking AI System)",
 };
 
 export default function RootLayout({
@@ -19,24 +20,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} antialiased`}>
-        {/* TOP NAV */}
-        <nav
-          style={{
-            display: "flex",
-            gap: "16px",
-            padding: "12px 16px",
-            borderBottom: "1px solid #e5e7eb",
-            marginBottom: 12,
-          }}
-        >
-          <Link href="/">Home</Link>
-          <Link href="/parking">Parking Insights</Link>
-        </nav>
-
-        {/* PAGE CONTENT */}
-        {children}
-
+      {/* Add your font class to body if you imported one, e.g. className={inter.className} */}
+      <body>
+        <SiteHeader />
+        {/* Page container */}
+        <main className="mx-auto max-w-5xl px-4 py-6">{children}</main>
+        <SiteFooter />
         <SpeedInsights />
       </body>
     </html>
