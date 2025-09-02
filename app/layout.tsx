@@ -7,8 +7,8 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 // import { Inter } from "next/font/google";
 // const inter = Inter({ subsets: ["latin"] });
 
-import SiteHeader from "../components/SiteHeader";
-import SiteFooter from "../components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   title: "Majaz Parking Dashboard",
