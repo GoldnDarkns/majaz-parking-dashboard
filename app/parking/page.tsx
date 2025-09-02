@@ -93,9 +93,4 @@ export default function ParkingInsights() {
   );
 }
 
-<iframe
-  style={{width:"100%", height:300, border:0, borderRadius:12, marginTop:12}}
-  loading="lazy"
-  referrerPolicy="no-referrer-when-downgrade"
-  src={`https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed`}
-/>
+
