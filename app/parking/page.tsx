@@ -13,7 +13,7 @@ export default function ParkingInsights() {
   // ✅ Fallback API base
   const API_BASE =
     process.env.NEXT_PUBLIC_API_BASE ||
-    "https://<your-current>.replit.dev"; // replace with your actual Replit API URL
+    "https://0fc9d3d2-012b-465b-8d9f-034278c7570d-00-34k4nj9bc7d90.sisko.replit.dev"; // replace with your actual Replit API URL
 
   const [lat, setLat] = useState(25.329);
   const [lng, setLng] = useState(55.385);
