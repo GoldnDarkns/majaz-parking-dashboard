@@ -10,11 +10,10 @@ type Result = {
 };
 
 export default function ParkingInsights() {
-  // ✅ Fallback so it still works if env var is missing.
-  //    Replace the fallback with your CURRENT Replit URL (no trailing slash).
+  // ✅ Fallback API base
   const API_BASE =
     process.env.NEXT_PUBLIC_API_BASE ||
-    "https://0fc9d3d2-012b-465b-8d9f-034278c7570d-00-34k4nj9bc7d90.sisko.replit.dev";
+    "https://<your-current>.replit.dev"; // replace with your actual Replit API URL
 
   const [lat, setLat] = useState(25.329);
   const [lng, setLng] = useState(55.385);
@@ -36,16 +35,12 @@ export default function ParkingInsights() {
         start: iso,
         duration: String(duration),
       });
-
       const url = `${API_BASE}/predict?${qs.toString()}`;
-      console.log("Fetching:", url); // 👀 See exact URL in DevTools
+      console.log("Fetching:", url);
 
       const r = await fetch(url);
-      const text = await r.text(); // read once (can parse JSON after)
-      if (!r.ok) {
-        throw new Error(`API ${r.status} – ${text.slice(0, 300)}`);
-      }
-
+      const text = await r.text();
+      if (!r.ok) throw new Error(`API ${r.status} – ${text.slice(0, 200)}`);
       const j = JSON.parse(text);
       setData(j);
     } catch (e: any) {
@@ -56,17 +51,32 @@ export default function ParkingInsights() {
     }
   };
 
+  // ✅ Run once on load
   useEffect(() => {
-    fetchData(); // run once on load
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ✅ Auto-refresh when inputs change
+  useEffect(() => {
+    const id = setTimeout(() => fetchData(), 300);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lat, lng, start, duration]);
 
   return (
     <main style={{ fontFamily: "system-ui", padding: 20, maxWidth: 820, margin: "0 auto" }}>
       <h1 style={{ fontSize: 28, marginBottom: 12 }}>🚗 Majaz 3 Parking Insights</h1>
 
       {/* Controls */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12, marginBottom: 16 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 12,
+          marginBottom: 16,
+        }}
+      >
         <div>
           <label>Lat</label>
           <input
@@ -112,11 +122,25 @@ export default function ParkingInsights() {
       <button
         onClick={fetchData}
         disabled={loading}
-        style={{ padding: "8px 12px", borderRadius: 10, border: "1px solid #ddd", opacity: loading ? 0.6 : 1 }}
+        style={{
+          padding: "8px 12px",
+          borderRadius: 10,
+          border: "1px solid #ddd",
+          opacity: loading ? 0.6 : 1,
+        }}
       >
         {loading ? "Refreshing…" : "Refresh"}
       </button>
 
+      {/* ✅ Mini map preview */}
+      <iframe
+        style={{ width: "100%", height: 300, border: 0, borderRadius: 12, marginTop: 12 }}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        src={`https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed`}
+      />
+
+      {loading && <p style={{ marginTop: 12 }}>Loading…</p>}
       {err && <p style={{ marginTop: 12, color: "#c00" }}>Error: {err}</p>}
 
       {data && (
@@ -139,8 +163,18 @@ export default function ParkingInsights() {
             <b>Alternatives:</b>
             <ul>
               {(data.alternatives || []).map((a) => (
-                <li key={a.lot_id}>
+                <li key={a.lot_id} style={{ marginBottom: 6 }}>
                   {a.name} • {a.walk_mins} min • {a.score}
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      a.name
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ marginLeft: 8 }}
+                  >
+                    (Open in Maps)
+                  </a>
                 </li>
               ))}
             </ul>
